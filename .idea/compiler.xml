@@ -8,6 +8,15 @@
         <outputRelativeToContentRoot value="true" />
         <module name="eureka-server" />
       </profile>
+      <profile name="Annotation profile for artwork-service" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.42/lombok-1.18.42.jar" />
+        </processorPath>
+        <module name="artwork-service" />
+      </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="art-microservice" target="1.5" />
@@ -15,6 +24,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="artwork-service" options="-parameters" />
       <module name="eureka-server" options="-parameters" />
     </option>
   </component>
