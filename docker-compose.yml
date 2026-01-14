@@ -1,5 +1,22 @@
 services:
 
+  mysql:
+    container_name: mysql
+    build:
+      context: ./mysql
+      args:
+        - MYSQL_DATABASE=${MYSQL_DATABASE}
+        - MYSQL_USER=${MYSQL_USER}
+        - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+        - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    ports:
+      - "${MYSQL_PORT}:3306"
+    volumes:
+      - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./mysql/mysql-data:/var/lib/mysql
+    networks:
+      - spring-microservice
+
   eureka-server:
     container_name: eureka-server
     build:
@@ -23,6 +40,26 @@ services:
     networks:
       - spring-microservice
 
+
+  auth-service:
+    container_name: auth-service
+    build:
+      context: ./auth-service
+      dockerfile: Dockerfile
+    ports:
+      - "8082:8082"
+    depends_on:
+      - mysql
+      - eureka-server
+    networks:
+      - spring-microservice
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/microservice?createDatabaseIfNotExist=true&characterEncoding=UTF-8&serverTimeZone=UTC
+      SPRING_DATASOURCE_USERNAME: baobao
+      SPRING_DATASOURCE_PASSWORD: 123456
+      SPRING_APPLICATION_NAME: auth-service
+      TOKEN_SECRET: ${TOKEN_SECRET}
+
   api-gateway:
     build:
       context: ./api-gateway
@@ -36,6 +73,7 @@ services:
       - spring-microservice
     environment:
       EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      TOKEN_SECRET: ${TOKEN_SECRET}
 
   config-service:
     container_name: config-service

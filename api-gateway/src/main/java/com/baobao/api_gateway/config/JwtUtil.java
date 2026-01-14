@@ -18,14 +18,15 @@ import java.util.HexFormat;
 @RequiredArgsConstructor
 public class JwtUtil {
 
-    @Value("${jwt.secret}")
+    @Value("${app.auth.tokenSecret}")
     private String secret;
 
     private Key key;
 
     @PostConstruct
     public void init(){
-        this.key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
+        byte[] keyBytes = HexFormat.of().parseHex(secret);
+        this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
     public Claims getAllClaimsFromToken(String token){
