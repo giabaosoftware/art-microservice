@@ -40,6 +40,18 @@ services:
     networks:
       - spring-microservice
 
+  artwork-service-1:
+    build:
+      context: ./artwork-service
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8084:8080"
+    depends_on:
+      - eureka-server
+    networks:
+      - spring-microservice
+
 
   auth-service:
     container_name: auth-service
@@ -59,6 +71,26 @@ services:
       SPRING_DATASOURCE_PASSWORD: 123456
       SPRING_APPLICATION_NAME: auth-service
       TOKEN_SECRET: ${TOKEN_SECRET}
+
+  account-service:
+    container_name: account-service
+    build:
+      context: ./account-service
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    depends_on:
+      - mysql
+      - eureka-server
+    networks:
+      - spring-microservice
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/microservice?createDatabaseIfNotExist=true&characterEncoding=UTF-8&serverTimeZone=UTC
+      SPRING_DATASOURCE_USERNAME: baobao
+      SPRING_DATASOURCE_PASSWORD: 123456
+      SPRING_APPLICATION_NAME: account-service
+      TOKEN_SECRET: ${TOKEN_SECRET}
+
 
   api-gateway:
     build:

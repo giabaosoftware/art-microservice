@@ -17,6 +17,9 @@ public class GatewayConfig {
                 .route("artwork-service",r-> r.path("/api/v1/artworks/**")
                         .filters(f -> f.filter(filter))
                         .uri("lb://ARTWORK-SERVICE"))
+                .route("account-service",r-> r.path("/api/v1/accounts/**")
+                        .filters(f -> f.filter(filter))
+                        .uri("lb://ACCOUNT-SERVICE"))
                 .build();
     }
 }
